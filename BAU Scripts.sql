@@ -302,3 +302,6 @@ WHERE l2_name = 'Private Insitiutions' --Draws upon the level 2 categorization f
 WHERE l3_name = 'High School' --Draws upon the level 3 categorization from our app/poi datasets
 WHERE l4_name = 'Cempaka High School' --Draws upon the level 4 categorization from our app/poi datasets
 WHERE brq_count > xxx -- Filters brq counts over/under a certain amount to filter frequent users of apps or visitors of POIs
+
+
+--testing add line
