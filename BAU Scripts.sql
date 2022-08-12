@@ -1,6 +1,13 @@
+-- General notes to keep in mind when using the guide
+-- 1) Scripts provided are only samples that might include criteria from different segments. Double-check the dataest paths and make sure the columns and values are in the correct spelling (case-sensitive)
+-- 2) Use the audience explorer function on the CIE tool as a reference point on how the dataset columns are spelled and categorized
+-- 3) Substitute "database_name" with your own personal database created on Athena
+
+------------- Creating, Extracting and Analysing Segments -------------
+
 -- Creating a segment with lifestage datasets
 
-CREATE OR REPLACE VIEW "database_name"."view_name" AS
+CREATE OR REPLACE VIEW "database_name"."xxx" AS
 SELECT DISTINCT (ifa) --SELECT COUNT DISTINCT (d.ifa) to find IFA count
 FROM "da_datamart"."dse_lifestage"
 WHERE "lifestage_name" = 'lifestage'
@@ -10,7 +17,7 @@ AND dt IN ('date')
 
 -- Creating a segment with affluence/age datasets
 
-CREATE OR REPLACE VIEW "database_name"."view_name" AS
+CREATE OR REPLACE VIEW "database_name"."xxx" AS
 SELECT DISTINCT (ifa) --SELECT COUNT DISTINCT (d.ifa) to find IFA count
 FROM "da_datamart"."da_datamart_static_full_(country)"
 WHERE "age" = 'age_group'
@@ -20,17 +27,17 @@ AND dt IN ('date')
 
 -- Creating a segment with app datasets
 
-CREATE OR REPLACE VIEW "database_name"."view_name" AS
+CREATE OR REPLACE VIEW "database_name"."xxx" AS
 SELECT DISTINCT (ifa) --SELECT COUNT DISTINCT (d.ifa) to find IFA count
 FROM "da_datamart"."da_datamart_app_(country)"
 WHERE "l1_name" = 'l1_name'
 AND dt IN ('date')
--- AND brq_count > 200 (Filters brq counts over/under a certain amount to filter frequent users of apps or visitors of POIs)
+-- AND brq_count > xxx (Filters brq counts over/under a certain amount to filter frequent users of apps or visitors of POIs)
 
 
 -- Creating a segment with POI datasets
 
-CREATE OR REPLACE VIEW "database_name"."view_name" AS
+CREATE OR REPLACE VIEW "database_name"."xxx" AS
 SELECT DISTINCT (ifa) --SELECT COUNT DISTINCT (d.ifa) to find IFA count
 FROM "da_datamart"."da_datamart_poi_(country)"
 WHERE "l1_name" = 'l1_name'
@@ -40,17 +47,18 @@ AND month IN ('date')
 
 -- Creating a segment with home location
 
-CREATE OR REPLACE VIEW "database_name"."view_name" AS
+CREATE OR REPLACE VIEW "database_name"."xxx" AS
 SELECT DISTINCT (ifa) --SELECT COUNT DISTINCT (d.ifa) to find IFA count
 FROM "ada_data"."home_location_country"
 WHERE "home_state/etc" = 'state_name'
 AND partition_0 IN ('date')
 
 
--- Creating a segment joining age, poi, lifestage & static datasets 
+-- Creating a segment with joins (age, poi, lifestage & static datasets) 
+-- Note: Remove the datasets you dont want and edit the filter subjects to those that would fit your segment criteria
 
 --Step 1: Create a table/view to save your results on 
-CREATE OR REPLACE VIEW "database_name"."view_name" AS
+CREATE OR REPLACE VIEW "database_name"."xxx" AS
 
 --Step 2: Select the relevant columns or results youd like to pull
 SELECT DISTINCT (d.ifa) -- to pull list of unique IFAs. 'SELECT COUNT DISTINCT (d.ifa)' to find IFA count
@@ -62,18 +70,41 @@ INNER JOIN "da_datamart"."da_datamart_static_full_(country)" as c on b.ifa = c.i
 INNER JOIN "da_datamart"."dse_lifestage" as d on c.ifa = d.ifa
 
 --Step 4: Apply filters where needed
-WHERE a.l1_name IN ('Call and Chat')
-AND b.l1_name IN ('Place of Work')
-AND c.age IN ('25-34')
-AND c.final_affluence IN ('High','Ultra High')
-AND d.lifestage_name IN ('Parents with Kids (0-6)')
+WHERE a.l1_name IN ('l1_name')
+AND b.l1_name IN ('l1_name')
+AND c.age IN ('age')
+AND c.final_affluence IN ('affluence')
+AND d.lifestage_name IN ('lifestage_name')
 AND d.country IN ('MY')
 AND a.dt IN ('date')
 AND b.month IN ('date')
 AND c.dt IN ('date')
 AND d.dt IN ('date')
 
+
+-- The script with all the correct values and filters should look like this
+-- Note: Remove the datasets you dont want and edit the filter subjects to those that would fit your segment criteria
+
+CREATE OR REPLACE VIEW "da_aqlif_2022"."sample_db" AS
+SELECT DISTINCT (d.ifa)
+FROM "da_datamart"."da_datamart_app_my" as a
+INNER JOIN "da_datamart"."da_datamart_poi_my" as b on a.ifa = b.ifa
+INNER JOIN "da_datamart"."da_datamart_static_full_my" as c on b.ifa = c.ifa
+INNER JOIN "da_datamart"."dse_lifestage" as d on c.ifa = d.ifa
+WHERE a.l1_name IN ('Call and Chat')
+AND b.l1_name IN ('Place of Work')
+AND c.age IN ('25-34')
+AND c.final_affluence IN ('High','Ultra High')
+AND d.lifestage_name IN ('Parents with Kids (0-6)')
+AND d.country IN ('MY')
+AND a.dt IN ('202207')
+AND b.month IN ('202207')
+AND c.dt IN ('202207')
+AND d.dt IN ('202207')
+
+
 -- FOR IFA EXTRACTIONS: click 'Download Results' for the list of IFAs in csv
+
 
 -- FOR PERSONA BUILDS AND CI: GROUP BY function to analyze data
 
@@ -100,6 +131,7 @@ ORDER BY ifa_count DESC
 --Step 3: To see how many IFAs are within a certain radius of the POI, use the script below.
 
 --Note: Check the 'from' functions and see if the script is pulling from the right database/file. Check also the filters to see if those are right
+
 CREATE TABLE 
 database_name.table_name AS
 SELECT
@@ -145,7 +177,7 @@ SELECT
 ) B
 ON A.join_key = B.join_key
 )
-WHERE distance <= 0.02;
+WHERE distance <= xxx;
 
 --Step 4: With the output table from the above script, filter according to POI of choice and conduct analysis
 
@@ -163,7 +195,7 @@ where name = 'poi 1'
 --Step 4(c) - Filtering according to capture radius
 select distinct ifa
 from database_name.table_name
-where distance < 200
+where distance < xxx
 
 --Step 4(d) - Analyzing the POIs by joining it with xact datasets
 --Note: Check the 'from' functions and see if the script is pulling from the right database/file. Check also the filters to see if those are right
@@ -180,7 +212,7 @@ order by ifa_count desc
 --Creating a table unnesting the aggregate monthly dataset
 --Note: if the request requires more columns for analysis, refer to the monthly_agg_(country) dataset to see which nested datapoints are required and add to the 'select' funciton using the format below
 
-CREATE OR REPLACE VIEW "database_name"."th_device_dataset_xxx" AS 
+CREATE OR REPLACE VIEW "database_name"."device_dataset_xxx" AS 
 SELECT DISTINCT
   ifa
 , brq_count
@@ -203,19 +235,19 @@ WHERE ((b.country = 'XX') AND (dt IN ('XXX')))
 --SAMPLE ANALYSIS:
 -- Finding popular phone brands
 select device_manufacturer, count (distinct ifa) as ifa_count
-from "database_name"."th_device_dataset_xxx"
+from "database_name"."device_dataset_xxx"
 group by device_manufacturer
 order by ifa_count desc
 
 -- Finding popular operating systems
 select device_manufacturer, count (distinct ifa) as ifa_count
-from "database_name"."th_device_dataset_xxx"
+from "database_name"."device_dataset_xxx"
 group by device_manufacturer
 order by ifa_count desc
 
 --Finding popular phone brands in a certain state
 select device_manufacturer, count (distinct ifa) as ifa_count
-from "database_name"."th_device_dataset_xxx" as a
+from "database_name"."device_dataset_xxx" as a
 inner join "ada_data"."home_location_(country)"
 where home_state = 'XXX'
 group by device_manufacturer
@@ -263,4 +295,4 @@ WHERE l1_name = 'Education' --Draws upon the level 1 categorization from our app
 WHERE l2_name = 'Private Insitiutions' --Draws upon the level 2 categorization from our app/poi datasets
 WHERE l3_name = 'High School' --Draws upon the level 3 categorization from our app/poi datasets
 WHERE l4_name = 'Cempaka High School' --Draws upon the level 4 categorization from our app/poi datasets
-WHERE brq_count > 200 -- Filters brq counts over/under a certain amount to filter frequent users of apps or visitors of POIs
+WHERE brq_count > xxx -- Filters brq counts over/under a certain amount to filter frequent users of apps or visitors of POIs
