@@ -305,3 +305,6 @@ WHERE brq_count > xxx -- Filters brq counts over/under a certain amount to filte
 
 
 --testing add line
+
+--Run MY App
+SELECT * FROM da_datamart.da_datamart_app
