@@ -64,6 +64,7 @@ INNER JOIN "da_datamart"."dse_lifestage" as d on c.ifa = d.ifa
 --Step 4: Apply filters where needed
 WHERE a.l1_name IN ('Call and Chat')
 AND b.l1_name IN ('Place of Work')
+AND c.age IN ('25-34')
 AND c.final_affluence IN ('High','Ultra High')
 AND d.lifestage_name IN ('Parents with Kids (0-6)')
 AND d.country IN ('MY')
