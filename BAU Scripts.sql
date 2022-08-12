@@ -53,8 +53,9 @@ FROM "ada_data"."home_location_country"
 WHERE "home_state/etc" = 'state_name'
 AND partition_0 IN ('date')
 
+-- Note: Notice that the scripts above are conducting the same function, but the difference is in the datasets pulled, the names of the columns and what is filtered
 
--- Creating a segment with joins (age, poi, lifestage & static datasets) 
+-- Creating a segment with INNER JOINS (age, poi, lifestage & static datasets) 
 -- Note: Remove the datasets you dont want and edit the filter subjects to those that would fit your segment criteria
 
 --Step 1: Create a table/view to save your results on 
@@ -82,7 +83,7 @@ AND c.dt IN ('date')
 AND d.dt IN ('date')
 
 
--- The script with all the correct values and filters should look like this
+-- The script with all the correct values and filters should look like this. This script would pull high affluence, mid-aged IFAS with young kids
 -- Note: Remove the datasets you dont want and edit the filter subjects to those that would fit your segment criteria
 
 CREATE OR REPLACE VIEW "da_aqlif_2022"."sample_db" AS
@@ -113,7 +114,12 @@ FROM "dataset_name"."view_name"
 GROUP BY column_name
 ORDER BY ifa_count DESC
 
--- How it would look like:
+-- An example of how it would look like:
+SELECT l1_name, COUNT (DISTINCT ifa) AS ifa_count
+FROM "da_datamart"."da_datamart_app_sg"
+GROUP BY l1_name
+ORDER BY ifa_count DESC
+
 # | l1_name | ifa_count
 1	Games	2242613
 2	Personal Productivity	1194073
