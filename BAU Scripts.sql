@@ -1,7 +1,8 @@
 -- General notes to keep in mind when using the guide
--- 1) Scripts provided are only samples that might include criteria from different segments. Double-check the dataest paths and make sure the columns and values are in the correct spelling (case-sensitive)
--- 2) Use the audience explorer function on the CIE tool as a reference point on how the dataset columns are spelled and categorized
--- 3) Substitute "database_name" with your own personal database created on Athena
+-- 1) Scripts provided are only samples that might include criteria from different segments. 
+-- 2) Double-check the dataest paths and make sure the columns and values are in the correct spelling (case-sensitive).
+-- 3) Use the audience explorer function on the CIE tool as a reference point on how the dataset columns are spelled and categorized.
+-- 4) Substitute "database_name" with your own personal database created on Athena.
 
 ------------- Creating, Extracting and Analysing Segments -------------
 
@@ -83,7 +84,7 @@ AND c.dt IN ('date')
 AND d.dt IN ('date')
 
 
--- The script with all the correct values and filters should look like this. This script would pull high affluence, mid-aged IFAS with young kids
+-- The script with all the correct values and filters should look like this. This script would pull high affluence, mid-aged parent IFAS with young kids
 -- Note: Remove the datasets you dont want and edit the filter subjects to those that would fit your segment criteria
 
 CREATE OR REPLACE VIEW "da_aqlif_2022"."sample_db" AS
